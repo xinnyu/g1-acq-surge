@@ -1,0 +1,12 @@
+#!name=G1 ACQ
+#!desc=Surge 移植自 crhywun/g1-acq v7.5.0：被动采集 one.google.com 原始 SKU，仅对 /ai? 做三档改写；本机报告 /g1-sku-report。script-path 是配置目录里的文件，不要用 URL 安装。
+
+# 不拦全局 UDP 443。Surge 对 MITM hostname 默认 auto-quic-block，只让 one.google.com 的 QUIC 回退到 TCP。
+# max-size=-1：上游 max-size=0 在 Surge 里是 0 字节，正文会整段跳过脚本。
+
+[Script]
+g1-acq = type=http-response,pattern=^https://one\.google\.com/,requires-body=true,max-size=-1,binary-body-mode=false,script-path=g1-acq.js
+g1-sku-report = type=http-request,pattern=^https://one\.google\.com/g1-sku-report/?(?:\?.*)?$,script-path=g1-sku-report.js
+
+[MITM]
+hostname = %APPEND% one.google.com
