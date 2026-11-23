@@ -102,13 +102,12 @@ test("surge module does not copy the shadowrocket body and quic traps", () => {
   assert.match(module, /requires-body=true/);
   assert.match(module, /max-size=-1/);
   assert.match(module, /binary-body-mode=false/);
-  assert.match(module, /script-path=g1-acq\.js/);
-  assert.match(module, /script-path=g1-sku-report\.js/);
+  assert.match(module, /script-path=https:\/\/cdn\.jsdelivr\.net\/gh\/xinnyu\/g1-acq-surge@main\/g1-acq\.js/);
+  assert.match(module, /script-path=https:\/\/cdn\.jsdelivr\.net\/gh\/xinnyu\/g1-acq-surge@main\/g1-sku-report\.js/);
   assert.match(module, /hostname = %APPEND% one\.google\.com/);
   const scriptLines = module.split("\n").filter((line) => line.includes("type="));
   assert.equal(scriptLines.some((line) => line.includes("DEST-PORT")), false);
   assert.equal(scriptLines.some((line) => /max-size=0(?!\d)/.test(line)), false);
-  assert.equal(module.includes("jsdelivr"), false);
   const response = module.split("\n").find((line) => line.includes("type=http-response"));
   const pattern = new RegExp(response.match(/pattern=([^,]+)/)[1]);
   assert.equal(pattern.test("https://one.google.com/ai?x=1"), true);

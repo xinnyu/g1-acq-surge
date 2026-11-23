@@ -4,7 +4,7 @@
 
 改写命中只说明正文里的商品 ID 被换掉了，不等于 App Store 认这个商品，也不等于能按这个价格扣款。名称、周期、首付和续费以收银台为准。
 
-私仓，Surge 拉不到 raw。`script-path` 写成配置目录里的文件名，不要用「从 URL 安装模块」。
+装这一个模块就行。Surge 会自己拉里面的两个脚本。
 
 ## 和上游的差别
 
@@ -25,21 +25,15 @@
 
 ## 安装
 
-配置目录（这份 iCloud 配置和手机同步，模块开关不同步）：
+Surge → 模块 → 从 URL 安装：
 
 ```text
-~/Library/Mobile Documents/iCloud~com~nssurge~inc/Documents/
+https://cdn.jsdelivr.net/gh/xinnyu/g1-acq-surge@main/g1-acq.sgmodule
 ```
 
-放进这三个实体文件，不要软链（iCloud 不同步软链）：
+装好后打开模块 **G1 ACQ**。模块只往 MITM 里追加 `one.google.com`，证书和 HTTPS 解密总开关还是你自己的。手机要信任 Surge 根证书。MITM 里的 Automatically Block QUIC 保持默认开。
 
-- `g1-acq.sgmodule`
-- `g1-acq.js`
-- `g1-sku-report.js`
-
-然后在手机 Surge 里打开模块 **G1 ACQ**。Mac 上当前配置已经有 MITM 证书和 `h2`，模块只追加 `one.google.com`。手机要信任 Surge 的根证书，HTTPS 解密总开关要开着。MITM 设置里的 Automatically Block QUIC 保持默认开。
-
-改完模块或解密后重连 Surge，再进 Google App 的订阅页。
+订阅页在手机上的 Google App 里，所以要在手机那台 Surge 上启用。改完模块或解密后重连，再进订阅页。
 
 ## 报告
 
