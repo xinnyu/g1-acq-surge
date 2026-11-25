@@ -19,9 +19,9 @@
 |---|---|---|
 | `g1.ios.2tb.` 前缀 | `g1.2tb.ai.12months_ip_90p`（没有 `.acq`） | 无 |
 | `g1.ios.20tb.m.v2` | `g1.ai.ultra.1month_eft.acq` | 无 |
-| `g1.ios.30tb.ai.pro.m` | `g1.ai.ultra.3months_ip_90p.acq` | `g1.ai.ultra.3months_ip_75p.acq` |
+| `g1.ios.30tb.ai.pro.m` | `g1.ai.pro.12months_eft` | 无 |
 
-20TB 固定写成 `g1.ai.ultra.1month_eft.acq`，没有备用。30TB：原文里没有 90p、但有 75p 时才用 75p；两个目标都不在正文里时仍写默认 90p。这是字符串判断，不是商店查询。三档都没命中就原样返回。
+20TB 固定写成 `g1.ai.ultra.1month_eft.acq`，30TB 固定写成 `g1.ai.pro.12months_eft`。两档都没有备用。这是字符串判断，不是商店查询。三档都没命中就原样返回。
 
 ## 安装
 

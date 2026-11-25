@@ -48,18 +48,18 @@ test("rewrites the three tiers on /ai and leaves other tokens", () => {
   const { payload } = run("g1-acq.js", { body });
   assert.match(payload.body, new RegExp("plan " + TARGET + " end"));
   assert.match(payload.body, /g1\.ai\.ultra\.1month_eft\.acq/);
-  assert.match(payload.body, /g1\.ai\.ultra\.3months_ip_90p\.acq/);
+  assert.match(payload.body, /g1\.ai\.pro\.12months_eft/);
   assert.match(payload.body, /g1\.ios\.12tb\.fixture/);
   assert.match(payload.body, new RegExp(TWENTY + "\\.extra"));
   assert.doesNotMatch(payload.body, /g1\.ios\.2tb\.fixture_monthly/);
 });
 
-test("20TB stays on the 1-month free id; 30TB keeps 3-month 90p when that id is present", () => {
+test("20TB stays on the 1-month free id; 30TB stays on the 12-month free id", () => {
   const body = TWENTY + " g1.20tb.3months_ip_75p.acq " + THIRTY + " g1.ai.ultra.3months_ip_90p.acq";
   const { payload } = run("g1-acq.js", { body });
   assert.equal(
     payload.body,
-    "g1.ai.ultra.1month_eft.acq g1.20tb.3months_ip_75p.acq g1.ai.ultra.3months_ip_90p.acq g1.ai.ultra.3months_ip_90p.acq"
+    "g1.ai.ultra.1month_eft.acq g1.20tb.3months_ip_75p.acq g1.ai.pro.12months_eft g1.ai.ultra.3months_ip_90p.acq"
   );
 });
 
