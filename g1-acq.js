@@ -7,7 +7,7 @@
   // User-selected 12-month offer ID from the screenshot; store metadata is still unverified.
   var TARGET = "g1.2tb.ai.12months_ip_90p";
   var SKU_MAP = {
-    "g1.ios.20tb.m.v2": "g1.ai.ultra.1month_ip_90p.acq",
+    "g1.ios.20tb.m.v2": "g1.ai.ultra.1month_eft.acq",
     "g1.ios.30tb.ai.pro.m": "g1.ai.ultra.3months_ip_90p.acq"
   };
   var FALLBACK = {
