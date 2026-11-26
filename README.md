@@ -18,10 +18,10 @@
 | 正文里的完整源 SKU | 默认目标 | 备用 |
 |---|---|---|
 | `g1.ios.2tb.` 前缀 | `g1.2tb.ai.12months_ip_90p`（没有 `.acq`） | 无 |
-| `g1.ios.20tb.m.v2` | `com.google.gemini.2tb.ai.m.3month_ip_99p` | 无 |
+| `g1.ios.20tb.m.v2` | `https://com.google.gemini.2tb.ai.m.3month_ip_99p` | 无 |
 | `g1.ios.30tb.ai.pro.m` | `g1.ai.pro.12months_eft` | 无 |
 
-20TB 固定写成 `com.google.gemini.2tb.ai.m.3month_ip_99p`（前三月约 1 元/月，入口点 Ultra 5x，到手是 Pro）。30TB 固定写成 `g1.ai.pro.12months_eft`。两档都没有备用。这是字符串判断，不是商店查询。三档都没命中就原样返回。
+20TB 固定写成 `https://com.google.gemini.2tb.ai.m.3month_ip_99p`（美区收据是前三月 $0.29/月，入口点 Ultra 5x，到手是 Pro）。30TB 固定写成 `g1.ai.pro.12months_eft`。两档都没有备用。这是字符串判断，不是商店查询。三档都没命中就原样返回。
 
 ## 安装
 

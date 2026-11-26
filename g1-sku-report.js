@@ -45,7 +45,7 @@
     return isFinite(number) && number > 0 ? Math.floor(number) : 0;
   }
   function sku(value) {
-    return typeof value === "string" && /^(?:g1\.|com\.google\.gemini\.)[A-Za-z0-9._-]{1,160}$/.test(value) ? value : "";
+    return typeof value === "string" && /^(?:https:\/\/)?(?:g1\.|com\.google\.gemini\.)[A-Za-z0-9._-]{1,160}$/.test(value) ? value : "";
   }
   function rows(value, withTime, defaultTarget) {
     if (!Array.isArray(value)) return [];

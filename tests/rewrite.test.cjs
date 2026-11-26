@@ -59,7 +59,7 @@ test("20TB rewrites to the 1-yuan Pro id; 30TB stays on the 12-month free id", (
   const { payload } = run("g1-acq.js", { body });
   assert.equal(
     payload.body,
-    "com.google.gemini.2tb.ai.m.3month_ip_99p g1.20tb.3months_ip_75p.acq g1.ai.pro.12months_eft g1.ai.ultra.3months_ip_90p.acq"
+    "https://com.google.gemini.2tb.ai.m.3month_ip_99p g1.20tb.3months_ip_75p.acq g1.ai.pro.12months_eft g1.ai.ultra.3months_ip_90p.acq"
   );
 });
 
