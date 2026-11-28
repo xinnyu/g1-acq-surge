@@ -1,16 +1,57 @@
-/* Google One combined 2TB / 20TB / 30TB mappings. Surge http-response script. */
+/* Google One combined 2TB / Pro 5TB / 20TB / 30TB / 100GB / 200GB mappings for Surge.
+ *
+ * Attribution & Credits:
+ *   - Based on the open-source project `crhywun/g1-acq` (https://github.com/crhywun/g1-acq) by @crhywun
+ *   - Ultra 20TB/30TB 1-month free trial mapping contributed by @cehomecambodia-lang (PR #3)
+ *   - Extended in v8.0 with newly discovered 18-month / 15-month / 12-month / 9-month / 6-month $0 free trial
+ *     and discount SKUs from exhaustive Google Play BillingClient catalog scanning, plus Safari interactive target switching.
+ */
 "use strict";
 
 (function () {
-  var VERSION = "g1-acq-v7.5";
+  // Surge 可能把 body 交给脚本时是 Uint8Array；统一解码为字符串再匹配。
+  function textBody(body) {
+    if (typeof body === "string") return body;
+    if (typeof Uint8Array !== "undefined" && body instanceof Uint8Array) {
+      try { return new TextDecoder("utf-8").decode(body); } catch (e) {}
+    }
+    return body;
+  }
+
+  var VERSION = "g1-acq-v8.0";
   var SOURCE_PREFIX = "g1.ios.2tb.";
-  // User-selected 12-month offer ID from the screenshot; store metadata is still unverified.
-  var TARGET = "g1.2tb.ai.12months_ip_90p";
+  var TARGET_OVERRIDE_KEY = "g1.target.override.v1";
+
+  // Default target for 2TB / Pro 5TB: newly discovered 18-month $0 free trial (can be switched in Safari at https://one.google.com/g1-sku-report)
+  var DEFAULT_TARGET = "g1.2tb.ai.18months_eft";
+
+  // Priority chain for 2TB / Pro 5TB when auto-selecting from response body
+  var PRO_CHAIN = [
+    "g1.2tb.ai.18months_eft",
+    "g1.2tb.ai.15months_eft",
+    "g1.2tb.ai.12months_eft",
+    "g1.2tb.ai.subs_variant",
+    "g1.play.2tb.ai.student",
+    "g1.2tb.ai.6months_eft",
+    "g1.2tb.ai.4months_eft",
+    "g1.2tb.ai.3months_eft",
+    "g1.2tb.ai.2months_eft",
+    "g1.2tb.1year_eft",
+    "g1.2tb.6months_eft",
+    "g1.2tb.ai.12months_ip_90p",
+    "g1.2tb.ai.3months_ip_90p.acq",
+    "g1.2tb.ai.1month_ip_95p.acq"
+  ];
+
   var SKU_MAP = {
-    "g1.ios.20tb.m.v2": "https://com.google.gemini.2tb.ai.m.3month_ip_99p",
-    "g1.ios.30tb.ai.pro.m": "g1.ai.pro.12months_eft"
+    "g1.ios.20tb.m.v2": "g1.20tb.1month_eft.acq",
+    "g1.ios.30tb.ai.pro.m": "g1.ai.ultra.1month_eft.acq"
   };
-  var FALLBACK = {};
+  var FALLBACK = {
+    "g1.20tb.1month_eft.acq": "g1.20tb.3months_ip_90p.acq",
+    "g1.ai.ultra.1month_eft.acq": "g1.ai.ultra.3months_ip_90p.acq"
+  };
+
   var TEST_KEY = "g1.pro.annual.test.v1";
   var SCAN_KEY = "g1.sku.scan.v1";
   var SCAN_LIMIT = 300;
@@ -23,6 +64,16 @@
     $done({});
     return;
   }
+
+  var TARGET = DEFAULT_TARGET;
+  try {
+    if (typeof $persistentStore !== "undefined" && typeof $persistentStore.read === "function") {
+      var customTarget = ($persistentStore.read(TARGET_OVERRIDE_KEY) || "").trim();
+      if (/^g1\.[A-Za-z0-9._-]{2,120}$/.test(customTarget)) {
+        TARGET = customTarget;
+      }
+    }
+  } catch (e) {}
 
   var body = textBody(typeof $response === "object" && $response ? $response.body : undefined);
   try {
@@ -42,10 +93,7 @@
   var out = body;
 
   if (typeof body === "string") {
-    // 20TB and 30TB have no fallback.
-    // These are observed strings, not a verified store catalog.
-    var observed = body.match(/g1\.[a-z0-9._]{2,60}acq/g) || [];
-    // Match complete tokens before selecting 2TB or the two existing source IDs.
+    var observed = body.match(/g1\.[a-z0-9._]{2,60}(?:acq|eft|90p|95p|subs_variant|student)/g) || [];
     out = body.replace(
       /(^|[^A-Za-z0-9._@%-])(g1\.[A-Za-z0-9._-]+)(?=$|[^A-Za-z0-9._-])/g,
       function (match, before, id) {
@@ -83,7 +131,6 @@
     target: TARGET,
     targetOrigin: "user-specified",
     hitCount: hits,
-    // Legacy field name: counts 2TB/Pro rewrites, not the billing interval.
     annualHitCount: annualHits,
     matchedFrom: sources,
     status: typeof body !== "string" ? "non-text" : hits ? "rewritten" : "no-match"
@@ -100,25 +147,12 @@
     console.log("[g1-acq] local record unavailable");
   }
 
-  console.log("[g1-acq] " + VERSION + " hits=" + hits + " annualHits=" + annualHits);
+  console.log("[g1-acq] " + VERSION + " target=" + TARGET + " hits=" + hits + " annualHits=" + annualHits);
   sources.forEach(function (source) {
     console.log("[g1-acq] " + source.id + " -> " + source.to + " x" + source.count +
-      (source.fallback ? " fallback=75p" : ""));
+      (source.fallback ? " fallback=" + source.to : ""));
   });
   $done(hits ? { body: out } : {});
-
-
-  function textBody(body) {
-    if (typeof body === "string" || body == null) return body;
-    // Surge binary-body-mode hands over a Uint8Array. This module sets that off,
-    // but still decode a typed array so a future default change does not skip SKUs.
-    if (typeof TextDecoder === "undefined" || typeof body.byteLength !== "number") return body;
-    try {
-      return new TextDecoder("utf-8").decode(body);
-    } catch (error) {
-      return body;
-    }
-  }
 
   function collectOriginalSkus(originalBody) {
     var now = new Date().toISOString();
@@ -154,7 +188,6 @@
     var omittedCount = 0;
     var truncated = saved.truncated === true;
     if (isText) {
-      // Decode escaped dots on a discovery copy before rewriting the original body.
       var text = originalBody.replace(/\\u002e|\\x2e|&#0*46;|&#x0*2e;|&period;/gi, ".");
       var token = /(^|[^A-Za-z0-9._@%-])((?:g1\.|com\.google\.one\.)[A-Za-z0-9._-]+)(?=$|[^A-Za-z0-9._-])/g;
       var match;
@@ -187,7 +220,6 @@
       var event = priorResponse(row);
       if (event) recentResponses.push(event);
     });
-    // Preserve arrival order even if the device clock moves backward.
     recentResponses.push({
       at: now,
       path: safeRoute(url),
@@ -226,9 +258,6 @@
     console.log("[g1-acq] " + VERSION + " status=" + status + " addedCount=" + addedCount +
       " candidates=" + candidateCount + " omittedCount=" + omittedCount +
       " occurrences=" + hitCount + " saved=" + (stored ? "yes" : "no"));
-    Object.keys(found).sort().slice(0, SCAN_LIMIT).forEach(function (id) {
-      console.log("[g1-acq] " + id + " x" + found[id]);
-    });
   }
 
   function safeRoute(requestUrl) {

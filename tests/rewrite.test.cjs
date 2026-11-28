@@ -7,7 +7,7 @@ const vm = require("node:vm");
 const { test } = require("node:test");
 
 const root = path.resolve(__dirname, "..");
-const TARGET = "g1.2tb.ai.12months_ip_90p";
+const TARGET = "g1.2tb.ai.18months_eft";
 const TWENTY = "g1.ios.20tb.m.v2";
 const THIRTY = "g1.ios.30tb.ai.pro.m";
 const source = Object.fromEntries(
@@ -47,8 +47,8 @@ test("rewrites the three tiers on /ai and leaves other tokens", () => {
   ].join(" ");
   const { payload } = run("g1-acq.js", { body });
   assert.match(payload.body, new RegExp("plan " + TARGET + " end"));
-  assert.match(payload.body, /com\.google\.gemini\.2tb\.ai\.m\.3month_ip_99p/);
-  assert.match(payload.body, /g1\.ai\.pro\.12months_eft/);
+  assert.match(payload.body, /g1\.20tb\.1month_eft\.acq/);
+  assert.match(payload.body, /g1\.ai\.ultra\.1month_eft\.acq/);
   assert.match(payload.body, /g1\.ios\.12tb\.fixture/);
   assert.match(payload.body, new RegExp(TWENTY + "\\.extra"));
   assert.doesNotMatch(payload.body, /g1\.ios\.2tb\.fixture_monthly/);
@@ -59,7 +59,7 @@ test("20TB rewrites to the 1-yuan Pro id; 30TB stays on the 12-month free id", (
   const { payload } = run("g1-acq.js", { body });
   assert.equal(
     payload.body,
-    "https://com.google.gemini.2tb.ai.m.3month_ip_99p g1.20tb.3months_ip_75p.acq g1.ai.pro.12months_eft g1.ai.ultra.3months_ip_90p.acq"
+    "g1.20tb.1month_eft.acq g1.20tb.3months_ip_75p.acq g1.ai.ultra.3months_ip_90p.acq g1.ai.ultra.3months_ip_90p.acq"
   );
 });
 
@@ -91,7 +91,7 @@ test("report is local and does not rewrite itself", () => {
 
   const report = run("g1-sku-report.js", { url: "https://one.google.com/g1-sku-report" });
   assert.equal(report.payload.response.status, 200);
-  assert.match(report.payload.response.body, /本机脚本已接管 · v7\.5\.0/);
+  assert.match(report.payload.response.body, /本机脚本已接管 · v8\.0\.0/);
   assert.match(report.payload.response.body, /Surge/);
   assert.doesNotMatch(report.payload.response.body, /Shadowrocket/);
 });
