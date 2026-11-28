@@ -47,8 +47,8 @@ test("rewrites the three tiers on /ai and leaves other tokens", () => {
   ].join(" ");
   const { payload } = run("g1-acq.js", { body });
   assert.match(payload.body, new RegExp("plan " + TARGET + " end"));
-  assert.match(payload.body, /g1\.20tb\.1month_eft\.acq/);
-  assert.match(payload.body, /g1\.ai\.ultra\.1month_eft\.acq/);
+  assert.match(payload.body, /g1\.ios\.20tb\.m/);
+  assert.match(payload.body, /g1\.ios\.30tb\.m/);
   assert.match(payload.body, /g1\.ios\.12tb\.fixture/);
   assert.match(payload.body, new RegExp(TWENTY + "\\.extra"));
   assert.doesNotMatch(payload.body, /g1\.ios\.2tb\.fixture_monthly/);
@@ -59,7 +59,7 @@ test("20TB rewrites to the 1-yuan Pro id; 30TB stays on the 12-month free id", (
   const { payload } = run("g1-acq.js", { body });
   assert.equal(
     payload.body,
-    "g1.20tb.1month_eft.acq g1.20tb.3months_ip_75p.acq g1.ai.ultra.3months_ip_90p.acq g1.ai.ultra.3months_ip_90p.acq"
+    "g1.ios.20tb.m g1.20tb.3months_ip_75p.acq g1.ios.30tb.m g1.ai.ultra.3months_ip_90p.acq"
   );
 });
 
@@ -102,8 +102,8 @@ test("surge module does not copy the shadowrocket body and quic traps", () => {
   assert.match(module, /requires-body=true/);
   assert.match(module, /max-size=-1/);
   assert.match(module, /binary-body-mode=false/);
-  assert.match(module, /script-path=https:\/\/cdn\.jsdelivr\.net\/gh\/xinnyu\/g1-acq-surge@main\/g1-acq\.js/);
-  assert.match(module, /script-path=https:\/\/cdn\.jsdelivr\.net\/gh\/xinnyu\/g1-acq-surge@main\/g1-sku-report\.js/);
+  assert.match(module, /script-path=https:\/\/cdn\.jsdelivr\.net\/gh\/xinnyu\/g1-acq-surge@v8\.0\.\d+\/g1-acq\.js/);
+  assert.match(module, /script-path=https:\/\/cdn\.jsdelivr\.net\/gh\/xinnyu\/g1-acq-surge@v8\.0\.\d+\/g1-sku-report\.js/);
   assert.match(module, /hostname = %APPEND% one\.google\.com/);
   const scriptLines = module.split("\n").filter((line) => line.includes("type="));
   assert.equal(scriptLines.some((line) => line.includes("DEST-PORT")), false);

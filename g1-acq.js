@@ -43,14 +43,13 @@
     "g1.2tb.ai.1month_ip_95p.acq"
   ];
 
+  // 土耳其区低价方案（需土区 Apple ID + 土区付款方式）
+  // README/crhywun: 公开记录报价 ₺1,989.99/月（20TB）、₺2,949.99/月（30TB）
   var SKU_MAP = {
-    "g1.ios.20tb.m.v2": "g1.20tb.1month_eft.acq",
-    "g1.ios.30tb.ai.pro.m": "g1.ai.ultra.1month_eft.acq"
+    "g1.ios.20tb.m.v2": "g1.ios.20tb.m",
+    "g1.ios.30tb.ai.pro.m": "g1.ios.30tb.m"
   };
-  var FALLBACK = {
-    "g1.20tb.1month_eft.acq": "g1.20tb.3months_ip_90p.acq",
-    "g1.ai.ultra.1month_eft.acq": "g1.ai.ultra.3months_ip_90p.acq"
-  };
+  var FALLBACK = {};
 
   var TEST_KEY = "g1.pro.annual.test.v1";
   var SCAN_KEY = "g1.sku.scan.v1";
